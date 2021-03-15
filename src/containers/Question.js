@@ -16,11 +16,14 @@ const Alert = styled.div`
 const ROOT_API = "https://api.stackexchange.com/2.2/";
 
 class Question extends Component {
-  state = {
-    data: [],
-    loading: true,
-    error: "",
-  };
+  constructor() {
+    super();
+    this.state = {
+      data: [],
+      loading: true,
+      error: "",
+    };
+  }
   async componentDidMount() {
     const { match } = this.props;
     try {
