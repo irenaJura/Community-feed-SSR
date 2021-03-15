@@ -1,9 +1,8 @@
 import React, { Component } from "react";
 import styled from "styled-components";
 import Card from "../components/Card/Card";
-import { Link } from "react-router-dom";
 
-const FeedWrapper = styled.div`
+const QuestionWrapper = styled.div`
   display: flex;
   justify-content: space-between;
   flex-direction: column;
@@ -16,20 +15,17 @@ const Alert = styled.div`
 
 const ROOT_API = "https://api.stackexchange.com/2.2/";
 
-class Feed extends Component {
-  constructor() {
-    super();
-    this.state = {
-      data: [],
-      loading: true,
-      error: "",
-    };
-  }
-
+class Question extends Component {
+  state = {
+    data: [],
+    loading: true,
+    error: "",
+  };
   async componentDidMount() {
+    const { match } = this.props;
     try {
       const data = await fetch(
-        `${ROOT_API}questions?order=desc&sort=activity&tagged=reactjs&site=stackoverflow`
+        `${ROOT_API}questions/${match.params.id}?site=stackoverflow`
       );
       const dataJSON = await data.json();
 
@@ -41,28 +37,22 @@ class Feed extends Component {
       }
     } catch (error) {
       this.setState({
-        loading: false,
+        loading: true,
         error: error.message,
       });
     }
   }
-
   render() {
     const { data, loading, error } = this.state;
     if (loading || error) {
       return <Alert>{loading ? "Loading..." : error}</Alert>;
     }
-
     return (
-      <FeedWrapper>
-        {data.items.map((item) => (
-          <Link key={item.question_id} to={`/questions/${item.question_id}`}>
-            <Card data={item} />
-          </Link>
-        ))}
-      </FeedWrapper>
+      <QuestionWrapper>
+        <Card key={data.items[0].question_id} data={data.items[0]} />
+      </QuestionWrapper>
     );
   }
 }
 
-export default Feed;
+export default Question;
